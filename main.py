@@ -11,7 +11,7 @@ def main():
     num_episode = 1             # Number of total episode in a single simulation for taking ensemble average
     #lamda = 0.6					# sellerの費率
 
-    simulation = Simulation(population, average_degree)
+    simulation = Simulation(population_seller, population_buyer, average_degree)
 
     for episode in range(num_episode):
         random.seed()

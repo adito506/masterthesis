@@ -9,10 +9,10 @@ from agent import Buyer
 class Simulation:
     
     def __init__(self, population_seller, population_buyer,average_degree):
-        self.sellers = self.__generate_sellers(population_seller, average_degree)
+        self.sellers = self.__generate_sellers(population_seller, population_buyer, average_degree)
         self.initial_honest_sellers = self.__choose_initial_honest_sellers()
 
-        self.buyers = self.__generate_buyers(population_buyer, average_degree)
+        self.buyers = self.__generate_buyers(population_seller, population_buyer, average_degree)
         self.initial_simple_buyers = self.__choose_initial_simple_buyers()
 
     def __generate_sellers(self, population_seller, population_buyer, average_degree):
@@ -22,48 +22,46 @@ class Simulation:
 
         sellers = [Seller() for id in range(population_seller)]#rangeで0~populationまでの数字をAgentに割り付ける
         for index, focal_seller in enumerate(sellers):#enumerateでforループの中のリストやタプルにインデックス番号をつける
-            neighbors_id = list(self.network[index])
-            for nb_id in neighbors_id:
-                focal_seller.neighbors_id.append(nb_id)#appendで末尾に要素を追加
+            next_sellers_id = list(self.network[index])
+            for nb_id in next_sellers_id:
+                focal_seller.next_sellers_id.append(nb_id)#appendで末尾に要素を追加
         
         return sellers
 
-    def __generate_buyers(self, population_buyer, average_degree):
+    def __generate_buyers(self, population_seller, population_buyer, average_degree):
         rearange_edges = int(average_degree*0.5)
         self.network = nx.barabasi_albert_graph(population_seller, rearange_edges)#buyerの取引相手のnodeなのでseller
         num_buyers = int(population_buyer)
 
         buyers = [Buyer() for id in range(population_buyer)]#rangeで0~populationまでの数字をAgentに割り付ける
         for index, focal_buyer in enumerate(buyers):#enumerateでforループの中のリストやタプルにインデックス番号をつける
-            neighbors_id = list(self.network[index])
-            for nb_id in neighbors_id:
-                focal_buyer.neighbors_id.append(nb_id)#appendで末尾に要素を追加
+            next_buyers_id = list(self.network[index])
+            for nb_id in next_buyers_id:
+                focal_buyer.next_buyers_id.append(nb_id)#appendで末尾に要素を追加
         
         return buyers
 
     def __choose_initial_honest_sellers(self):
         population = len(self.sellers)
-        self.__choose_initial_honest_sellers = rnd.sample(range(population_seller), k = int(population_seller/2))
+        self.initial_honest_sellers = rnd.sample(range(population), k = int(population/2))
 
 
-   def __choose_initial_simple_buyers(self):
+    def __choose_initial_simple_buyers(self):
         population = len(self.buyers)
-        self.__choose_initial_simple_buyers = rnd.sample(range(population_buyer), k = int(population_buyer/2))
+        self.initial_simple_buyers = rnd.sample(range(population), k = int(population/2))
 
     def __initialize_strategy_sellers(self):
         """Initialize the strategy of agents"""
-
         for index, focal_seller in enumerate(self.sellers):
-            if index in self.__choose_initial_honest_sellers:
+            if index in self.initial_honest_sellers:
                 focal_seller.strategy = "H"
             else:
                 focal_seller.strategy = "L"
 
     def __initialize_strategy_buyers(self):
         """Initialize the strategy of agents"""
-
         for index, focal_buyer in enumerate(self.buyers):
-            if index in self.__choose_initial_simple_buyers:
+            if index in self.initial_simple_buyers:
                 focal_buyer.strategy = "Buy"
             else:
                 focal_buyer.strategy = "NotBuy"
@@ -127,18 +125,17 @@ class Simulation:
     
         return fc_buyer
 
-    def __play_game(self, episode):
+    def __play_game(self, episode, Dg):
         """Continue games until fc gets converged"""
         tmax = 3000
 
         self.__initialize_strategy_sellers()
-        self.__initialize_strategy_buyers()
-
         initial_fc_seller = self.__count_fc_seller()
-        initial_fc_buyer = self.__count_fc_buyer()
+        fc_hist_seller = [initial_fc_seller]
         
 
-        fc_hist_seller = [initial_fc_seller]
+        self.__initialize_strategy_buyers()
+        initial_fc_buyer = self.__count_fc_buyer()
         fc_hist_buyer = [initial_fc_buyer]
 
 
@@ -183,14 +180,14 @@ class Simulation:
                 else:
                     self.network.nodes[index]["strategy"] = "L"
 
-            def color(i):
-                if self.network.nodes[i]["strategy"] == "H":
-                    return 'cyan'
-                else:
-                    return 'pink'
+        def color(i):
+            if self.network.nodes[i]["strategy"] == "H":
+                return 'cyan'
+            else:
+                return 'pink'
             
-            color =  dict((i, color(i)) for i in self.network.nodes())
-                pos = nx.spring_layout(self.network)
+        color =  dict((i, color(i)) for i in self.network.nodes())
+        pos = nx.spring_layout(self.network)
                 
         nx.draw_networkx_edges(self.network, pos)
         nx.draw_networkx_nodes(self.network, pos, node_color = list(color.values()), node_size = 10)
@@ -206,9 +203,9 @@ class Simulation:
         result = pd.DataFrame({'Dg': [], 'Fc_S': []})
         self.__choose_initial_honest_sellers()
 
-            for Dg in np.arange(0, 1.1, 0.1):
-                fc_converged = self.__play_game(episode, Dg)
-                new_result = pd.DataFrame([[format(Dg, '.1f'), fc_converged]], columns = ['Dg', 'Fc_S'])
-                result = result.append(new_result)
+        for Dg in np.arange(0, 1.1, 0.1):
+            fc_converged = self.__play_game(episode, Dg)
+            new_result = pd.DataFrame([[format(Dg, '.1f'), fc_converged]], columns = ['Dg', 'Fc_S'])
+            result = result.append(new_result)
         
         result.to_csv(f"phase_diagram{episode}.csv")
