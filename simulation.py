@@ -3,10 +3,10 @@ import random as rnd
 import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
-from agent import Seller
-from agent import Buyer
+from seller import Seller
+from buyer import Buyer
 
-class Simulation:
+class Simulation(Buyer, Seller):
     
     def __init__(self, population_seller, population_buyer,average_degree):
         self.sellers = self.__generate_sellers(population_seller, population_buyer, average_degree)
@@ -14,15 +14,16 @@ class Simulation:
 
         self.buyers = self.__generate_buyers(population_seller, population_buyer, average_degree)
         self.initial_simple_buyers = self.__choose_initial_simple_buyers()
+        super().__init__()
 
     def __generate_sellers(self, population_seller, population_buyer, average_degree):
         rearange_edges = int(average_degree*0.5)
-        self.network = nx.barabasi_albert_graph(population_buyer, rearange_edges)#sellerの取引相手のnodeなのでbuyer
-        num_sellers = int(population_seller)
+        self.network_seller = nx.barabasi_albert_graph(population_buyer, rearange_edges)#sellerの取引相手のnodeなのでbuyer
+        #num_sellers = int(population_seller)
 
         sellers = [Seller() for id in range(population_seller)]#rangeで0~populationまでの数字をAgentに割り付ける
         for index, focal_seller in enumerate(sellers):#enumerateでforループの中のリストやタプルにインデックス番号をつける
-            next_sellers_id = list(self.network[index])
+            next_sellers_id = list(self.network_seller[index])
             for nb_id in next_sellers_id:
                 focal_seller.next_sellers_id.append(nb_id)#appendで末尾に要素を追加
         
@@ -30,15 +31,14 @@ class Simulation:
 
     def __generate_buyers(self, population_seller, population_buyer, average_degree):
         rearange_edges = int(average_degree*0.5)
-        self.network = nx.barabasi_albert_graph(population_seller, rearange_edges)#buyerの取引相手のnodeなのでseller
-        num_buyers = int(population_buyer)
+        self.network_buyer = nx.barabasi_albert_graph(population_seller, rearange_edges)#buyerの取引相手のnodeなのでseller
+        #num_buyers = int(population_buyer)
 
         buyers = [Buyer() for id in range(population_buyer)]#rangeで0~populationまでの数字をAgentに割り付ける
         for index, focal_buyer in enumerate(buyers):#enumerateでforループの中のリストやタプルにインデックス番号をつける
-            next_buyers_id = list(self.network[index])
+            next_buyers_id = list(self.network_buyer[index])
             for nb_id in next_buyers_id:
                 focal_buyer.next_buyers_id.append(nb_id)#appendで末尾に要素を追加
-        
         return buyers
 
     def __choose_initial_honest_sellers(self):
@@ -50,13 +50,13 @@ class Simulation:
         population = len(self.buyers)
         self.initial_simple_buyers = rnd.sample(range(population), k = int(population/2))
 
-    def __initialize_strategy_sellers(self):
-        """Initialize the strategy of agents"""
-        for index, focal_seller in enumerate(self.sellers):
-            if index in self.initial_honest_sellers:
-                focal_seller.strategy = "H"
-            else:
-                focal_seller.strategy = "L"
+        def __initialize_strategy_sellers(self):
+            """Initialize the strategy of agents"""
+            for index, focal_seller in enumerate(self.sellers):
+                if index in self.initial_honest_sellers:
+                    focal_seller.strategy = "H"
+                else:
+                    focal_seller.strategy = "L"
 
     def __initialize_strategy_buyers(self):
         """Initialize the strategy of agents"""
@@ -209,3 +209,7 @@ class Simulation:
             result = result.append(new_result)
         
         result.to_csv(f"phase_diagram{episode}.csv")
+
+# print(Simulation.__mro__)
+# s = Simulation(100,100,4)
+# print(s.__play_game)
