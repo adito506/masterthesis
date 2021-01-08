@@ -395,7 +395,7 @@
 @misc{questionnaire,
 	author = {国土交通省},
     title = {既存住宅状況調査の実施状況に関するアンケート調査結果},
-    note = {https://www.mlit.go.jp/common/001333002.pdfhttps://www.mlit.go.jp/totikensangyo/const/content/001359696.pdf, Accessed: 2020-12-23}
+    note = {https://www.mlit.go.jp/common/001333002.pdf, Accessed: 2020-12-23}
 }
 @misc{jutakuseino,
 	author = {国土交通省},
@@ -479,5 +479,38 @@
 	note = 	 {ID: cdi\_scopus\_primary\_2\_s2\_0\_85048427313\_txt},
 	isbn = 	 {9780-996683142}
 }
-
+@article{sweeney2002a,
+	author={Latanya Sweeney},
+	year={2002},
+	title={k-ANONYMITY: A MODEL FOR PROTECTING PRIVACY},
+	journal={International journal of uncertainty, fuzziness, and knowledge-based systems},
+	volume={10},
+	number={5},
+	pages={557-570},
+	note={This paper significantly amends and substantially expands the earlier paper "Protecting privacy when disclosing information: k-anonymity and its enforcement through generalization and suppression" (with Samarati) submitted to IEEE Security and Privacy 1998, and extends parts of my Ph.D. thesis "Computational Disclosure Control: A primer on data privacy protection" at the Massachusetts Institute Technology 2001.; ID: cdi\_gale\_infotracacademiconefile\_A463046917},
+	abstract={Consider a data holder, such as a hospital or a bank, that has a privately held collection of person-specific, field structured data. Suppose the data holder wants to share a version of the data with researchers. How can a data holder release a version of its private data with scientific guarantees that the individuals who are the subjects of the data cannot be re-identified while the data remain practically useful? The solution provided in this paper includes a formal protection model named k-anonymity and a set of accompanying policies for deployment. A release provides k-anonymity protection if the information for each person contained in the release cannot be distinguished from at least k-1 individuals whose information also appears in the release. This paper also examines re-identification attacks that can be realized on releases that adhere to k-anonymity unless accompanying policies are respected. The k-anonymity protection model is important because it forms the basis on which the real-world systems known as Datafly, μ-Argus and k-Similar provide guarantees of privacy protection.},
+	isbn={0218-4885},
+	doi={10.1142/S0218488502001648}
+}
+@article{sweeney2002b,
+	author={Latanya Sweeney},
+	year={2002},
+	title={ACHIEVING k-ANONYMITY PRIVACY PROTECTION USING GENERALIZATION AND SUPPRESSION},
+	journal={International journal of uncertainty, fuzziness, and knowledge-based systems},
+	volume={10},
+	number={5},
+	pages={571-588},
+	note={This paper significantly amends and expands the earlier paper "Protecting privacy when disclosing information: k-anonymity and its enforcement through generalization and suppression" (with Samarati) submitted to IEEE Security and Privacy 1998, and extends parts of my Ph.D. thesis 10].; ID: cdi\_gale\_infotracacademiconefile\_A463046918},
+	abstract={Often a data holder, such as a hospital or bank, needs to share person-specific records in such a way that the identities of the individuals who are the subjects of the data cannot be determined. One way to achieve this is to have the released records adhere to k-anonymity, which means each released record has at least (k-1) other records in the release whose values are indistinct over those fields that appear in external data. So, k-anonymity provides privacy protection by guaranteeing that each released record will relate to at least k individuals even if the records are directly linked to external information. This paper provides a formal presentation of combining generalization and suppression to achieve k-anonymity. Generalization involves replacing (or recoding) a value with a less specific but semantically consistent value. Suppression involves not releasing a value at all. The Preferred Minimal Generalization Algorithm (MinGen), which is a theoretical algorithm presented herein, combines these techniques to provide k-anonymity protection with minimal distortion. The real-world algorithms Datafly and μ-Argus are compared to MinGen. Both Datafly and μ-Argus use heuristics to make approximations, and so, they do not always yield optimal results. It is shown that Datafly can over distort data and μ-Argus can additionally fail to provide adequate protection.},
+	isbn={0218-4885},
+	doi={10.1142/S021848850200165X}
+}
+@article{muramoto2007,
+	author={村本 俊祐 and 上土井 陽子 and 若林 真一},
+	year={2007},
+	title={k-匿名性を利用したデータ一般化によるプライバシー保護},
+	journal={電子情報通信学会 データ工学ワークショップ論文集},
+	number={18},
+	note={https://www.ieice.org/iss/de/DEWS/DEWS2007/pdf/a7-10.pdf},
+}
 
