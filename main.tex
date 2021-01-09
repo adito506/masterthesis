@@ -10,6 +10,7 @@
 \usepackage{cite}
 \usepackage[dvipdfmx]{graphicx}
 \usepackage{lscape}
+\usepackage{listings, jlisting}
 
 \title{日本の中古住宅市場における\\スマートコントラクト活用効果の検証}
 \author{
@@ -49,7 +50,7 @@
 
 \begin{figure}
  \centering
- \includegraphics[width=14cm]{reason.png}
+ \includegraphics[width=12cm]{reason.png}
  \caption{中古住宅を購入しなかった理由}
  出所：国土交通省「平成30年 住宅動向調査」より筆者作成
  \label{reason}
@@ -176,7 +177,7 @@ C=P\times(\delta+\mu+\tau+i-\pi_H)
 \subsection{スマートコントラクト}
 スマートコントラクトは、ブロックチェーン上で資産の移転などの処理を行うプログラムであり、法的な契約ではない。従来の紙や電子契約においては、契約の条件が満たされているかの判断は自動では行われず、各契約当事者が確認を行う必要があった。スマートコントラクトでは、契約の条件が満たされたかの確認はプログラムが行い、契約内容の執行はブロックチェーン上の価値の移転によって自動的に行うことができる。スマートコントラクトで実行された内容はブロックチェーン上に改ざんできない形で記載されるため、取り消すことができない。これはCode is lawとよく言われる概念であり、スマートコントラクトにおいては、ブロックチェーン上に書かれたプログラムが、契約書であり、裁判所でもあることになる\cite{nagasawa2013}。
 
-スマートコントラクトが実行されるブロックチェーンネットワークには、パブリックとプライベートの区別がある。パブリックブロックチェーンは誰でも読み込み、書き込むことができる。プライベートブロックチェーンではユーザー毎に異なる権限設定を行える。イーサリアム、Bitcoinはパブリックブロックチェーンであり、プライベートブロックチェーンとしてはHyperledger Fabricなどがある。
+スマートコントラクトが実行されるブロックチェーンネットワークには、パブリックとプライベートの区別がある。パブリックブロックチェーンは誰でも読み込み、書き込むことができる。プライベートブロックチェーンではユーザー毎に異なる権限設定を行える。イーサリアム、Bitcoinはパブリックブロックチェーンであり、プライベートブロックチェーンとしてはHyperledger Fabric\footnote{https://www.hyperledger.org/use/fabric}などがある。
 
 \subsection{イーサリアムブロックチェーンとスマートコントラクト}
 イーサリアムブロックチェーンは、スマートコントラクトを実装する基盤として多く用いられている。イーサリアムブロックチェーンでは、外部所有アカウント(EOA)とコントラクトアカウントの2種類のアカウントがあり、外部所有アカウントはブロックチェーンの参加者によって、参加者のために作成されたアカウントで秘密鍵を持っている。コントラクトアカウントは秘密鍵を持たず、スマートコントラクトコードによって制御されるアカウントである。これらのアカウントはアドレスやネイティブ通貨であるEtherの残高などの情報を持っている。トランザクションは、外部所有アカウントから発信される署名付きのメッセージで、イーサリアムの状態の変更やスマートコントラクトの実行ができる。スマートコントラクトを実行するためのトランザクションを発信できるのは外部所有アカウントのみだが、スマートコントラクトにより制御されたコントラクトアカウントは、他のコントラクトアカウントを呼び出すことができる。イーサリアムブロックチェーンにおいてスマートコントラクトを実行する場合、ガスと呼ばれる費用がかかり、計算能力を提供するマイナーへの報酬となる。通常、コントラクトを実行する際には、使用されるガスの上限であるガスリミットを設定する。費用の総額は、プログラムの実行にあたって使用された計算能力とストレージの使用量に基づくガス量に、Etherを単位とするガスの単価を乗じて算出される。ガスは、トランザクションの送信者によって負担され、トランザクションの送信者はガスの単価を指定する。マイナーは、未処理のトランザクションの中から単価の高いトランザクションを選んで処理できるため、高いガスの単価を提示すれば、より早くそのトランザクションは処理される(Antonopoulos and Wood 2019)\cite{antonopoulos2019}。
@@ -253,7 +254,7 @@ C=P\times(\delta+\mu+\tau+i-\pi_H)
 住宅アセット、保険契約、住宅取引契約のコントラクトの組み合わせにより、買主は購入する住宅の品質を把握し、購入後に住宅の品質が予想外に低かった場合に発生する修繕費用などの損失を回避できる。これによって中古住宅市場における情報の非対称性の問題を解消することができる。売主にとっては、保有期間中に行ったメンテナンスやリフォームが住宅性能表示を通して取引価格に影響するため、適切なメンテナンスを行うインセンティブが発生する。これにより、高い品質の住宅供給の増加が期待できる。住宅の価格、品質の情報は住宅取引契約から住宅アセットに直接更新され、改ざんはできない。売主と買主は、住宅アセットの取引情報の検索を通して住宅の価格水準を把握し、値決めを行うことができる。
 
 \chapter{検証}
-情報の非対称性の解消が住宅取引に与える影響を検証するため、マルチエージェントシミュレーションを行った\footnote{シミュレーションに用いたコードは付録に記載する。}。マルチエージェントシミュレーションは、複数の自律的なエージェントからなるシミュレーションである。本研究では、売主と買主をエージェントとし、住宅取引を単純化したゲームで各エージェントの戦略の変動を検証した。
+情報の非対称性の解消が住宅取引に与える影響を検証するため、マルチエージェントシミュレーションを行った\footnote{シミュレーションに用いたコードは付録に記載する。}(松原 2016)\cite{matsubara2016}。マルチエージェントシミュレーションは、複数の自律的なエージェントからなるシミュレーションである。本研究では、売主と買主をエージェントとし、住宅取引を単純化したゲームで各エージェントの戦略の変動を検証した。
 
 \section{ゲームのルール}
 \subsection{情報の非対称性が存在するゲーム}
@@ -303,19 +304,6 @@ P_{i \gets j}=\dfrac{1}{1+\exp\biggl(\dfrac{\Pi_i-\Pi_j}{\kappa}\biggr)}
 ゲームAにおける$F_H$を集計したのが図\ref{FH_gameA}である。縦方向に$Pr$をとり、横方向に$Q_h$をとっている。それぞれのセルの値が、全てのエピソードにおける$F_H$の平均値である。この結果から、$Pr$が低いうちは妥当な値付けをする売主もいるが、$Pr$が高くなると$F_H$は低下し、高い値付け戦略をとり続けることがわかる。
 ゲームAにおける$F_T$を集計したのが図\ref{FT_gameA}である。$F_H$と同様に、$Pr$が高くなると$F_T$は低下しているが、$F_H$に比べると低下の度合いは緩やかである。
 
-% \begin{figure}
-%  \centering
-%  \includegraphics[width=11cm]{FH_gameA.png}
-%  \caption{妥当な値付けをした売主の割合(ゲームA)}
-%  \label{FH_gameA}
-% \end{figure}
-% \begin{figure}
-%  \centering
-%  \includegraphics[width=11cm]{FT_gameA.png}
-%  \caption{買主の購入割合(ゲームA)}
-%  \label{FT_gameA}
-% \end{figure}
-
 \begin{figure}[hbtp]
   \begin{center}
     \begin{tabular}{c}
@@ -342,19 +330,7 @@ P_{i \gets j}=\dfrac{1}{1+\exp\biggl(\dfrac{\Pi_i-\Pi_j}{\kappa}\biggr)}
 
 \section{ゲームBの評価}
 ゲームBにおける$F_H$を集計したのが図\ref{FH_gameB}である。ゲームAと比べ$F_H$の水準が高くなっており、妥当な値付けの戦略をとる売主が増えている。$F_T$も幅広く範囲で値が増えている（図\ref{FT_gameB}。買主が品質情報をもち、売主の戦略を見破れるようになったことで、買主が購入の戦略を維持するケースが増え、全体として取引が成立する割合が高まったと考えられる。$F_H$、$F_T$の、ゲームAとゲームBの間の差は図\ref{Dif_seller}、\ref{Dif_buyer}の通りである。
-% \begin{figure}
-%  \centering
-%  \includegraphics[width=11cm]{FH_gameB.png}
-%  \caption{妥当な値付けをした売主の割合(ゲームB)}
-%  \label{FH_gameB}
-% \end{figure}
 
-% \begin{figure}
-%  \centering
-%  \includegraphics[width=11cm]{FT_gameB.png}
-%  \caption{買主の購入割合(ゲームB)}
-%  \label{FT_gameB}
-% \end{figure}
 
 \begin{figure}[hbtp]
   \begin{center}
@@ -406,7 +382,7 @@ P_{i \gets j}=\dfrac{1}{1+\exp\biggl(\dfrac{\Pi_i-\Pi_j}{\kappa}\biggr)}
 
 
 \section{分布の正規性}
-各エピソードにおける結果の分布について、正規性を検証するためShapiro-Wilkの正規性検定を行った。図\ref{SW_test_seller_gameA}は、ゲームAにおける$F_H$の検定結果、図\ref{SW_test_buyer_gameA}は$F_T$の検定結果である。5\%有意水準をとると、$F_H$、 $F_T$ともに$Pr$が20\%以下の水準では、分布に正規性が認められず、20\%を超えた範囲ではp値が5\%を超え、正規性が見られることが確認できた。
+各エピソードにおける結果の分布について、正規性を検証するためShapiro-Wilkの正規性検定を行った(Shapiro and Wilk 1965)\cite{shapiro1965}。図\ref{SW_test_seller_gameA}は、ゲームAにおける$F_H$の検定結果、図\ref{SW_test_buyer_gameA}は$F_T$の検定結果である。5\%有意水準をとると、$F_H$、 $F_T$ともに$Pr$が20\%以下の水準では、分布に正規性が認められず、20\%を超えた範囲ではp値が5\%を超え、正規性が見られることが確認できた。
 
 \begin{figure}[hbtp]
   \begin{center}
@@ -497,13 +473,588 @@ Mashatan and Roberts(2017)\cite{mashatan2017}は、カナダの不動産市場�
 
 \appendix
 %\def\thechapter{Appendix\Alph{chapter}}
-\chapter{マルチエージェントシミュレーションのコード}
-\footnote{本研究のシミュレーションのコードはhttps://github.com/keyskey/SPDpyを参考に作成した。}
-\section{Sellers Class}
-\section{Buyers Class}
-\section{Simulation Class(ゲームA)}
-\section{Simulation Class(ゲームB)}
 
+\chapter{マルチエージェントシミュレーションのコード}
+本研究のマルチエージェントシミュレーションはpythonで行った。使用したコードは以下の通りである。\footnote{シミュレーションのコードはhttps://github.com/keyskey/SPDpyを参考に作成した。}
+\section{Sellers Class}
+\begin{lstlisting}
+import random as rnd
+import numpy as np
+
+class Seller:
+"""売主のクラスを作成する"""    
+    def __init__(self):
+        self.point = 0.0
+        self.strategy = None
+        self.next_strategy = None
+        self.opponent_id = []
+        self.next_buyer_id = []
+        super().__init__()
+
+        
+    def decide_next_strategy(self, seller):
+        """ゲームが終わるごとに、他の売主と特点の比較を行い、
+        次の戦略を決める"""
+        opp_id = rnd.choice(self.opponent_id)
+        opp = seller[opp_id]
+
+        if opp.strategy != self.strategy and rnd.random() 
+		        < 1/(1 + np.exp((self.point - opp.point)/0.1)):
+            self.next_strategy = opp.strategy
+        else:
+            self.next_strategy = self.strategy
+
+    def update_strategy(self):
+        self.strategy = self.next_strategy
+
+\end{lstlisting}
+\newpage
+
+\section{Buyers Class}
+\begin{lstlisting}
+  import random as rnd
+  import numpy as np
+
+  class Buyer:
+  """買主のクラスを作成する"""    
+      def __init__(self):
+          self.point = 0.0
+          self.strategy = None
+          self.next_strategy = None
+          self.opponent_id = []
+          self.next_seller_id = []
+          super().__init__() 
+
+
+      def decide_next_strategy(self, buyer):
+          """ゲームが終わるごとに、他の買主と特点の比較を行い、
+          次の戦略を決める"""
+          opp_id = rnd.choice(self.opponent_id)
+          opp = buyer[opp_id]
+
+          if opp.strategy != self.strategy and rnd.random() 
+		          < 1/(1 + np.exp((self.point - opp.point)/0.1)):
+              self.next_strategy = opp.strategy
+          else:
+              self.next_strategy = self.strategy
+
+      def update_strategy(self):
+          self.strategy = self.next_strategy
+\end{lstlisting}
+\newpage
+
+\section{Simulation Class(ゲームA)}
+\begin{lstlisting}
+import numpy as np
+import random as rnd
+import networkx as nx
+import matplotlib.pyplot as plt
+import pandas as pd
+from seller import Seller
+from buyer import Buyer
+
+class Simulation(Seller):
+"""シミュレーションのクラスを作成する"""    
+    def __init__(self, population_seller, population_buyer,
+    average_degree):
+        self.seller = self.__generate_seller(population_seller,
+        population_buyer, average_degree)
+        self.initial_honest_seller =
+        self.__choose_initial_honest_seller()
+        self.buyer = self.__generate_buyer(population_seller,
+        population_buyer, average_degree)
+        self.initial_simple_buyer =
+        self.__choose_initial_simple_buyer()
+        
+
+    def __generate_seller(self, population_seller, population_buyer,
+    average_degree):
+        """売主は、取引の相手方となる買主とのネットワークを持つ"""
+        rearange_edges = int(average_degree)
+        self.network_seller =
+        nx.barabasi_albert_graph(population_buyer, rearange_edges)
+        self.network_opponent =
+        nx.barabasi_albert_graph(population_seller, rearange_edges)
+        
+        seller = [Seller() for id in range(population_seller)]
+        for index, focal_seller in enumerate(seller):
+            next_buyer_id = list(self.network_seller[index])
+            opponent_id = list(self.network_opponent[index])
+            for nb_id in next_buyer_id:
+                focal_seller.next_buyer_id.append(nb_id)
+                for opp_id in opponent_id:
+                    focal_seller.opponent_id.append(opp_id)
+        return seller
+
+    def __generate_buyer(self, population_seller, population_buyer, 
+    average_degree):
+        """売主は、取引の相手方となる売主とのネットワークを持つ"""
+        rearange_edges = int(average_degree)
+        self.network_buyer = nx.barabasi_albert_graph(population_seller, 
+        rearange_edges)
+        self.network_opponent = nx.barabasi_albert_graph(population_buyer, 
+        rearange_edges)
+
+        buyer = [Buyer() for id in range(population_buyer)]
+        for index, focal_buyer in enumerate(buyer):
+            next_seller_id = list(self.network_buyer[index])
+            opponent_id = list(self.network_opponent[index])
+            for nb_id in next_seller_id:
+                focal_buyer.next_seller_id.append(nb_id)
+                for opp_id in opponent_id:
+                    focal_buyer.opponent_id.append(opp_id)
+        return buyer
+
+    def __choose_initial_honest_seller(self):
+        """半分の売主が、最所のゲームで「妥当な価格の戦略」を取る"""
+        population = len(self.seller)
+        initial_honest_seller = rnd.sample(range(population), 
+        k = int(population/2))
+        return initial_honest_seller
+
+
+    def __choose_initial_simple_buyer(self):
+        """半分の売主が、無条件に購入する戦略を取る"""
+        population = len(self.buyer)
+        initial_simple_buyer = rnd.sample(range(population), 
+        k = int(population/2))
+        return initial_simple_buyer
+        
+
+    def __initialize_strategy_seller(self):
+        for index, focal_seller in enumerate(self.seller):
+            if index in self.initial_honest_seller:
+                focal_seller.strategy = "H"
+            else:
+                focal_seller.strategy = "L"
+
+    def __initialize_strategy_buyer(self):
+        for index, focal_buyer in enumerate(self.buyer):
+            if index in self.initial_simple_buyer:
+                focal_buyer.strategy = "Buy"
+            else:
+                focal_buyer.strategy = "NotBuy"
+
+    def __count_payoff_seller(self, Pr, r, Q_H):
+        """利得表に基づいて売主が獲得する利得を計算する"""
+        R = 0
+        S = -r*Q_H
+        T = Q_H*Pr
+        P = -r*Q_H
+
+        for focal_seller in self.seller:
+            focal_seller.point = 0.0
+            for nb_id in focal_seller.next_buyer_id:
+                neighbor = self.buyer[nb_id]
+                if focal_seller.strategy == "L" and 
+                neighbor.strategy == "Buy":
+                    focal_seller.point += T
+                elif focal_seller.strategy == "L" and 
+                neighbor.strategy == "NotBuy":
+                    focal_seller.point += P
+                elif focal_seller.strategy == "H" and 
+                neighbor.strategy == "Buy":
+                    focal_seller.point += R
+                elif focal_seller.strategy == "H" and 
+                neighbor.strategy == "NotBuy":  
+                    focal_seller.point += S
+    
+    def __count_payoff_buyer(self, Pr, r, Q_H):
+        """利得表に基づいて買主が獲得する利得を計算する"""
+        R = 0
+        S = -r*Q_H
+        T = -Q_H*Pr
+        P = -r*Q_H
+
+        for focal_buyer in self.buyer:
+            focal_buyer.point = 0.0
+            for nb_id in focal_buyer.next_seller_id:
+                neighbor = self.seller[nb_id]
+                if focal_buyer.strategy == "Buy" and 
+                neighbor.strategy == "L":    
+                    focal_buyer.point += T
+                elif focal_buyer.strategy == "NotBuy" and 
+                neighbor.strategy == "L":   
+                    focal_buyer.point += P
+                elif focal_buyer.strategy == "Buy" and 
+                neighbor.strategy == "H":   
+                    focal_buyer.point += R
+                elif focal_buyer.strategy == "NotBuy" and 
+                neighbor.strategy == "H":  
+                    focal_buyer.point += S
+
+
+    def __update_strategy_seller(self):
+        for focal_seller in self.seller:
+            focal_seller.decide_next_strategy(self.seller)
+        
+        for focal_seller in self.seller:
+            focal_seller.update_strategy()
+
+    def __update_strategy_buyer(self):
+        for focal_buyer in self.buyer:
+            focal_buyer.decide_next_strategy(self.buyer)
+        
+        for focal_buyer in self.buyer:
+            focal_buyer.update_strategy()
+
+    def __count_fc_seller(self):
+        """「妥当な価格の戦略」をとった売主の割合を計算する"""
+        fc_seller = len([seller for seller in self.seller if 
+        seller.strategy == "H"])/len(self.seller)
+    
+        return fc_seller
+
+    def __count_fc_buyer(self):
+        """購入戦略をとった買主の割合を計算する"""        
+        fc_buyer = len([buyer for buyer in self.buyer if 
+        buyer.strategy == "Buy"])/len(self.buyer)
+    
+        return fc_buyer
+
+    def __discount_rate(self):
+        """売主、買主の割引率をランダムに作成する"""
+        r = rnd.uniform(0.01, 0.1)
+        return r
+
+    def __play_game(self, episode, Pr, r, Q_H):
+        """ゲームを続ける条件を設定する"""
+        tmax = 3000
+
+        self.__initialize_strategy_seller()
+        initial_fc_seller = self.__count_fc_seller()
+        fc_hist_seller = [initial_fc_seller]
+        
+
+        self.__initialize_strategy_buyer()
+        initial_fc_buyer = self.__count_fc_buyer()
+        fc_hist_buyer = [initial_fc_buyer]
+
+
+        print(f"Episode:{episode}, Time: 0, Pr:{Pr:.2f}, 
+        Q_H:{Q_H:.2f}, Fc_S:{initial_fc_seller:.3f}, 
+        Fc_B:{initial_fc_buyer:.3f}")
+
+        for t in range(1, tmax+1):
+            self.__count_payoff_seller(Pr, r, Q_H)
+            self.__count_payoff_buyer(Pr, r, Q_H)
+            self.__update_strategy_seller()
+            self.__update_strategy_buyer()
+            fc_s = self.__count_fc_seller()
+            fc_b = self.__count_fc_buyer()
+            fc_hist_seller.append(fc_s)
+            fc_hist_buyer.append(fc_b)
+            print(f"Episode:{episode}, Time:{t}, Pr:{Pr:.2f}, 
+            Q_H:{Q_H:.2f}, Fc_S:{fc_s:.3f}, Fc_B:{fc_b:.3f}")
+
+
+            if fc_s == 0 or fc_s == 1 or fc_b == 0 or fc_b == 1:
+                fc_converged = fc_s
+                fc_sold = fc_b
+                comment = "Fc_S(0 or 1"
+                break
+
+            if t >= 100 and np.absolute(np.mean(fc_hist_seller[t-100:t-1]) 
+            - fc_s)/fc_s < 0.001:
+                fc_converged = np.mean(fc_hist_seller[t-99:t])
+                fc_sold = np.mean(fc_hist_buyer[t-99:t])
+                comment = "Fc_S(converged)"
+                break
+
+            if t >= 100 and np.absolute(np.mean(fc_hist_buyer[t-100:t-1]) 
+            - fc_b)/fc_b < 0.001:
+                fc_converged = np.mean(fc_hist_seller[t-99:t])
+                fc_sold = np.mean(fc_hist_buyer[t-99:t])
+                comment = "Fc_B(converged)"
+                break
+
+            if t == tmax:
+                fc_converged = np.mean(fc_hist_seller[t-99:t])
+                fc_sold = np.mean(fc_hist_buyer[t-99:t])
+                comment = "Fc(final timestep)"
+                break
+
+        print(f"Pr:{Pr:.2f}, r:{r:.2f}, Time:{t}, {comment}:
+        {fc_converged:.3f}:{fc_sold:.3f}")
+        return fc_converged, fc_sold
+
+    def one_episode(self, episode):
+        """全パラメータ領域でplay_gameを実行し、計算結果をCSVに書き出す"""
+
+        result = pd.DataFrame({'Pr': [], 'Q_H': [], 'Fc_S': [], 
+        'Fc_B': []})
+        self.__choose_initial_honest_seller()
+        self.__choose_initial_simple_buyer()
+
+        for Pr in np.arange(0, 0.51, 0.05):
+            for Q_H in np.arange(0.1, 1.1, 0.1):
+                r = self.__discount_rate()
+                fc_converged = self.__play_game(episode, Pr, r, Q_H)
+                new_result = pd.DataFrame([[format(Pr, '.2f'), 
+                format(Q_H, '.2f'), fc_converged[0],fc_converged[1]]], 
+                columns = ['Pr', 'Q_H', 'Fc_S', 'Fc_B'])
+                result = result.append(new_result)
+        
+        result.to_csv(f"phase_diagram{episode}.csv")
+
+\end{lstlisting}
+\newpage
+
+\section{Simulation Class(ゲームB)}
+\begin{lstlisting}
+import numpy as np
+import random as rnd
+import networkx as nx
+import matplotlib.pyplot as plt
+import pandas as pd
+from seller import Seller
+from buyer import Buyer
+
+class Simulation(Seller):
+"""シミュレーションのクラスを作成する"""        
+    def __init__(self, population_seller, population_buyer, 
+    average_degree):
+        self.seller = self.__generate_seller(population_seller, 
+        population_buyer, average_degree)
+        self.initial_honest_seller = 
+        self.__choose_initial_honest_seller()
+        self.buyer = self.__generate_buyer(population_seller, 
+        population_buyer, average_degree)
+        self.initial_simple_buyer = 
+        self.__choose_initial_simple_buyer()
+        
+
+    def __generate_seller(self, population_seller, population_buyer, 
+    average_degree):
+        """売主は、取引の相手方となる買主とのネットワークを持つ"""
+        rearange_edges = int(average_degree)
+        self.network_seller = 
+        nx.barabasi_albert_graph(population_buyer, rearange_edges)
+        self.network_opponent = 
+        nx.barabasi_albert_graph(population_seller, rearange_edges)
+        
+        seller = [Seller() for id in range(population_seller)]
+        for index, focal_seller in enumerate(seller):
+            next_buyer_id = list(self.network_seller[index])
+            opponent_id = list(self.network_opponent[index])
+            for nb_id in next_buyer_id:
+                focal_seller.next_buyer_id.append(nb_id)
+                for opp_id in opponent_id:
+                    focal_seller.opponent_id.append(opp_id)
+        return seller
+
+    def __generate_buyer(self, population_seller, population_buyer, 
+    average_degree):
+        """売主は、取引の相手方となる売主とのネットワークを持つ"""        
+        rearange_edges = int(average_degree)
+        self.network_buyer = 
+        nx.barabasi_albert_graph(population_seller, rearange_edges)
+        self.network_opponent = 
+        nx.barabasi_albert_graph(population_buyer, rearange_edges)
+
+        buyer = [Buyer() for id in range(population_buyer)]
+        for index, focal_buyer in enumerate(buyer):
+            next_seller_id = list(self.network_buyer[index])
+            opponent_id = list(self.network_opponent[index])
+            for nb_id in next_seller_id:
+                focal_buyer.next_seller_id.append(nb_id)
+                for opp_id in opponent_id:
+                    focal_buyer.opponent_id.append(opp_id)
+        return buyer
+
+    def __choose_initial_honest_seller(self):
+        """半分の売主が、最所のゲームで「妥当な価格の戦略」を取る"""
+        population = len(self.seller)
+        initial_honest_seller = rnd.sample(range(population), 
+        k = int(population/2))
+        return initial_honest_seller
+
+
+    def __choose_initial_simple_buyer(self):
+        """半分の売主が、無条件に購入する戦略を取る"""
+        population = len(self.buyer)
+        initial_simple_buyer = rnd.sample(range(population), 
+        k = int(population/2))
+        return initial_simple_buyer
+        
+
+    def __initialize_strategy_seller(self):
+        """Initialize the strategy of agents"""
+        for index, focal_seller in enumerate(self.seller):
+            if index in self.initial_honest_seller:
+                focal_seller.strategy = "H"
+            else:
+                focal_seller.strategy = "L"
+
+    def __initialize_strategy_buyer(self):
+        for index, focal_buyer in enumerate(self.buyer):
+            if index in self.initial_simple_buyer:
+                focal_buyer.strategy = "Buy"
+            else:
+                focal_buyer.strategy = "NotBuy"
+
+    def __count_payoff_seller(self, Pr, r, Q_H):
+        """利得表に基づいて売主が獲得する利得を計算"""
+        R = 0
+        S = -r*Q_H
+        T = rnd.choice([-r*Q_H, Q_H*Pr]) #この利得がゲームAと異なる
+        P = -r*Q_H
+
+        for focal_seller in self.seller:
+            focal_seller.point = 0.0
+            for nb_id in focal_seller.next_buyer_id:
+                neighbor = self.buyer[nb_id]
+                if focal_seller.strategy == "L" and 
+                neighbor.strategy == "Buy":
+                    focal_seller.point += T
+                elif focal_seller.strategy == "L" and 
+                neighbor.strategy == "NotBuy":
+                    focal_seller.point += P
+                elif focal_seller.strategy == "H" and 
+                neighbor.strategy == "Buy":
+                    focal_seller.point += R
+                elif focal_seller.strategy == "H" and 
+                neighbor.strategy == "NotBuy":  
+                    focal_seller.point += S
+    
+    def __count_payoff_buyer(self, Pr, r, Q_H):
+        """利得表に基づいて買主が獲得する利得を計算"""
+        R = 0
+        S = -r*Q_H
+        T = rnd.choice([-r*Q_H, -Q_H*Pr]) #この利得がゲームAと異なる
+        P = -r*Q_H
+
+        for focal_buyer in self.buyer:
+            focal_buyer.point = 0.0
+            for nb_id in focal_buyer.next_seller_id:
+                neighbor = self.seller[nb_id]
+                if focal_buyer.strategy == "Buy" and 
+                neighbor.strategy == "L":    
+                    focal_buyer.point += T
+                elif focal_buyer.strategy == "NotBuy" and 
+                neighbor.strategy == "L":   
+                    focal_buyer.point += P
+                elif focal_buyer.strategy == "Buy" and 
+                neighbor.strategy == "H":   
+                    focal_buyer.point += R
+                elif focal_buyer.strategy == "NotBuy" and 
+                neighbor.strategy == "H":  
+                    focal_buyer.point += S
+
+
+    def __update_strategy_seller(self):
+        for focal_seller in self.seller:
+            focal_seller.decide_next_strategy(self.seller)
+        
+        for focal_seller in self.seller:
+            focal_seller.update_strategy()
+
+    def __update_strategy_buyer(self):
+        for focal_buyer in self.buyer:
+            focal_buyer.decide_next_strategy(self.buyer)
+        
+        for focal_buyer in self.buyer:
+            focal_buyer.update_strategy()
+
+    def __count_fc_seller(self):
+        """「妥当な価格の戦略」をとった売主の割合を計算する"""        
+        fc_seller = len([seller for seller in self.seller 
+        if seller.strategy == "H"])/len(self.seller)
+    
+        return fc_seller
+
+    def __count_fc_buyer(self):
+        """購入戦略をとった買主の割合を計算する"""        
+        fc_buyer = len([buyer for buyer in self.buyer 
+        if buyer.strategy == "Buy"])/len(self.buyer)
+    
+        return fc_buyer
+
+    def __discount_rate(self):
+        """売主、買主の割引率をランダムに作成する"""
+        r = rnd.uniform(0.01, 0.1)
+        return r
+
+    def __play_game(self, episode, Pr, r, Q_H):
+        """ゲームを続ける条件を設定する"""
+        tmax = 3000
+
+        self.__initialize_strategy_seller()
+        initial_fc_seller = self.__count_fc_seller()
+        fc_hist_seller = [initial_fc_seller]
+        
+
+        self.__initialize_strategy_buyer()
+        initial_fc_buyer = self.__count_fc_buyer()
+        fc_hist_buyer = [initial_fc_buyer]
+
+
+        print(f"Episode:{episode}, Time: 0, Pr:{Pr:.2f}, 
+        Q_H:{Q_H:.2f}, Fc_S:{initial_fc_seller:.3f}, 
+        Fc_B:{initial_fc_buyer:.3f}")
+
+        for t in range(1, tmax+1):
+            self.__count_payoff_seller(Pr, r, Q_H)
+            self.__count_payoff_buyer(Pr, r, Q_H)
+            self.__update_strategy_seller()
+            self.__update_strategy_buyer()
+            fc_s = self.__count_fc_seller()
+            fc_b = self.__count_fc_buyer()
+            fc_hist_seller.append(fc_s)
+            fc_hist_buyer.append(fc_b)
+            print(f"Episode:{episode}, Time:{t}, Pr:{Pr:.2f}, 
+            Q_H:{Q_H:.2f}, Fc_S:{fc_s:.3f}, Fc_B:{fc_b:.3f}")
+ 
+            if fc_s == 0 or fc_s == 1 or fc_b == 0 or fc_b == 1:
+                fc_converged = fc_s
+                fc_sold = fc_b
+                comment = "Fc_S(0 or 1"
+                break
+
+            if t >= 100 and np.absolute(np.mean(fc_hist_seller[t-100:t-1])
+            - fc_s)/fc_s < 0.001:
+                fc_converged = np.mean(fc_hist_seller[t-99:t])
+                fc_sold = np.mean(fc_hist_buyer[t-99:t])
+                comment = "Fc_S(converged)"
+                break
+
+            if t >= 100 and np.absolute(np.mean(fc_hist_buyer[t-100:t-1]) 
+            - fc_b)/fc_b < 0.001:
+                fc_converged = np.mean(fc_hist_seller[t-99:t])
+                fc_sold = np.mean(fc_hist_buyer[t-99:t])
+                comment = "Fc_B(converged)"
+                break
+
+            if t == tmax:
+                fc_converged = np.mean(fc_hist_seller[t-99:t])
+                fc_sold = np.mean(fc_hist_buyer[t-99:t])
+                comment = "Fc(final timestep)"
+                break
+
+        print(f"Pr:{Pr:.2f}, r:{r:.2f}, Time:{t}, {comment}:
+        {fc_converged:.3f}:{fc_sold:.3f}")
+        return fc_converged, fc_sold
+
+    def one_episode(self, episode):
+        """全パラメータ領域でplay_gameを実行し、計算結果をCSVに書き出す"""
+
+        result = pd.DataFrame({'Pr': [], 'Q_H': [], 'Fc_S': [], 'Fc_B': []})
+        self.__choose_initial_honest_seller()
+        self.__choose_initial_simple_buyer()
+
+        for Pr in np.arange(0, 0.51, 0.05):
+            for Q_H in np.arange(0.1, 1.1, 0.1):
+                r = self.__discount_rate()
+                fc_converged = self.__play_game(episode, Pr, r, Q_H)
+                new_result = pd.DataFrame([[format(Pr, '.2f'), 
+                format(Q_H, '.2f'), fc_converged[0],
+                fc_converged[1]]], 
+                columns = ['Pr', 'Q_H', 'Fc_S', 'Fc_B'])
+                result = result.append(new_result)
+        
+        result.to_csv(f"phase_diagram{episode}.csv")
+
+\end{lstlisting}
 
 \chapter{シミュレーション結果のヒートマップ}
 \section{ゲームA}
